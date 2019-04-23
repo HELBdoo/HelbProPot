@@ -2,8 +2,8 @@
 header('Access-Control-Allow-Origin: *'); 
 ?>
 <?php    
-$serverName = "HELBSKADA01";     
-$connectionInfo = array( "Database"=>"helbscada", "UID"=>"ibosilj", "PWD"=>"jpn5DKjv", "ReturnDatesAsStrings"=>true );   
+$connectionInfo = array("UID" => "filip@myserverfilip", "pwd" => "Sifra1234", "Database" => "SamoLabavo", "LoginTimeout" => 30, "Encrypt" => 1, "TrustServerCertificate" => 0, "ReturnDatesAsStrings"=>true);
+$serverName = "tcp:myserverfilip.database.windows.net,1433";   
 
 $conn = sqlsrv_connect( $serverName, $connectionInfo);
 if( $conn === false ) {
