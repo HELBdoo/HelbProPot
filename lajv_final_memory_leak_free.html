@@ -1,0 +1,1167 @@
+﻿<html>
+  <head>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,500" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript">
+    
+    google.charts.load('current', {'packages':['corechart']});
+	google.charts.load('current', {'packages':['gauge']});
+      
+    google.charts.setOnLoadCallback(danasProPot);
+	google.charts.setOnLoadCallback(danasSoc);
+	google.charts.setOnLoadCallback(danasRazlika);
+	google.charts.setOnLoadCallback(danasTemp);
+	
+	var myDan1 = null; var myMjesec1 = null; var myGodina1 = null; var myDan2 = null; var myMjesec2 = null; var myGodina2 = null; var myDan3 = null; var myMjesec3 = null; var myGodina3 = null; var myDan4 = null; var myMjesec4 = null; var myGodina4 = null;
+	var danasPP = null; var mjesecPP = null; var godinaPP = null; var danasS = null; var mjesecS = null; var godinaS = null; var danasR = null; var mjesecR = null; var godinaR = null; var danasT = null; var mjesecT = null; var godinaT = null;
+	var dataDPP = null; var dataMPP = null; var dataGPP = null; var dataDS = null; var dataMS = null; var dataGS = null; var dataDR = null; var dataMR = null; var dataGR = null; var dataDT = null; var dataMT = null; var dataGT = null; var dataLP = null; var dataLT = null;
+	var viewDPP = null; var viewMPP = null; var viewGPP = null; var viewDS = null; var viewMS = null; var viewGS = null; var viewDR = null; var viewMR = null; var viewGR = null; var viewDT = null; var viewMT = null; var viewGT = null;
+	
+    function danasProPot() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phppropot.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataDPP = new google.visualization.DataTable(jsonData);
+				
+				var d1 = dataDPP.getValue(1, 0);
+				var d2 = new Date (d1);
+				d2.setHours( d1.getHours() + 24 );
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Potrosnja/proizvodnja',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment: 'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.1 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Snaga [W]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM,  HH:mm', showTextEvery: 3, 
+							minValue: d1, maxValue: d2 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '80', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (danasPP === undefined || danasPP === null) {
+					danasPP = new google.visualization.AreaChart(document.getElementById('ProPot'));
+				} 
+				else {
+					danasPP.clearChart();
+				}
+				danasPP.draw(dataDPP, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataDPP.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(danasPP, 'select', function () {
+					var sel = danasPP.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataDPP.getColumnLabel(col),
+									type: dataDPP.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewDPP = new google.visualization.DataView(dataDPP);
+							viewDPP.setColumns(columns);
+							danasPP.clearChart();
+							danasPP.draw(viewDPP, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan1);
+		clearTimeout(myMjesec1);
+		clearTimeout(myGodina1);
+		myDan1 = setTimeout(danasProPot, 60000);
+		
+	};
+	
+	function mjesecProPot() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpmjesecpropot.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataMPP = new google.visualization.DataTable(jsonData);
+				
+				var options = {
+					fontName: 'Roboto',
+					title: 'Potrosnja/proizvodnja',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.1 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '60', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (mjesecPP === undefined || mjesecPP === null) {
+					mjesecPP = new google.visualization.AreaChart(document.getElementById('ProPot'));
+				} 
+				else {
+					mjesecPP.clearChart();
+				}
+				mjesecPP.draw(dataMPP, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataMPP.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(mjesecPP, 'select', function () {
+					var sel = mjesecPP.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataMPP.getColumnLabel(col),
+									type: dataMPP.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewMPP = new google.visualization.DataView(dataMPP);
+							viewMPP.setColumns(columns);
+							mjesecPP.clearChart();
+							mjesecPP.draw(viewMPP, options)
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan1);
+		clearTimeout(myMjesec1);
+		clearTimeout(myGodina1);
+		myMjesec1 = setTimeout(mjesecProPot, 3600000);
+		
+	};
+	
+	function godinaProPot() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpgodinapropot.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataGPP = new google.visualization.DataTable(jsonData);
+				
+				var options = {
+					fontName: 'Roboto',
+					title: 'Potrosnja/proizvodnja',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.1 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM yyyy', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '70', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (godinaPP === undefined || godinaPP === null) {
+					godinaPP = new google.visualization.AreaChart(document.getElementById('ProPot'));
+				} 
+				else {
+					godinaPP.clearChart();
+				}
+				godinaPP.draw(dataGPP, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataGPP.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(godinaPP, 'select', function () {
+					var sel = godinaPP.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataGPP.getColumnLabel(col),
+									type: dataGPP.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewGPP = new google.visualization.DataView(dataGPP);
+							viewGPP.setColumns(columns);
+							godinaPP.clearChart();
+							godinaPP.draw(viewGPP, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan1);
+		clearTimeout(myMjesec1);
+		clearTimeout(myGodina1);
+		myGodina1 = setTimeout(godinaProPot, 86400000);
+		
+	};
+	
+	function danasSoc() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpsoc.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataDS = new google.visualization.DataTable(jsonData);
+				
+				var d1 = dataDS.getValue(1, 0);
+				var d2 = new Date (d1);
+				d2.setHours ( d1.getHours() + 24 );
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Toplinska energija',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Snaga [W]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM,  HH:mm', showTextEvery: 3,
+							minValue: d1, maxValue: d2 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '80', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (danasS === undefined || danasS === null) {
+					danasS = new google.visualization.AreaChart(document.getElementById('Soc'));
+				} 
+				else {
+					danasS.clearChart();
+				}
+				danasS.draw(dataDS, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataDS.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(danasS, 'select', function () {
+					var sel = danasS.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataDS.getColumnLabel(col),
+									type: dataDS.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewDS = new google.visualization.DataView(dataDS);
+							viewDS.setColumns(columns);
+							danasS.clearChart();
+							danasS.draw(viewDS, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan2);
+		clearTimeout(myMjesec2);
+		clearTimeout(myGodina2);
+		myDan2 = setTimeout(danasSoc, 60000);
+		
+	};
+	
+	function mjesecSoc() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpmjesecsoc.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataMS = new google.visualization.DataTable(jsonData);
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Toplinska energija',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '60', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (mjesecS === undefined || mjesecS === null) {
+					mjesecS = new google.visualization.AreaChart(document.getElementById('Soc'));
+				} 
+				else {
+					mjesecS.clearChart();
+				}
+				mjesecS.draw(dataMS, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataMS.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(mjesecS, 'select', function () {
+					var sel = mjesecS.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataMS.getColumnLabel(col),
+									type: dataMS.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewMS = new google.visualization.DataView(dataMS);
+							viewMS.setColumns(columns);
+							mjesecS.clearChart();
+							mjesecS.draw(viewMS, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan2);
+		clearTimeout(myMjesec2);
+		clearTimeout(myGodina2);
+		myMjesec2 = setTimeout(mjesecSoc, 3600000);
+		
+	};
+	
+	function godinaSoc() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpgodinasoc.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataGS = new google.visualization.DataTable(jsonData);
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Toplinska energija',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 },
+							  2: { color: 'a6a6a6', areaOpacity: 0.5 } },
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM yyyy', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '70', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (godinaS === undefined || godinaS === null) {
+					godinaS = new google.visualization.AreaChart(document.getElementById('Soc'));
+				} 
+				else {
+					godinaS.clearChart();
+				}
+				godinaS.draw(dataGS, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataGS.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(godinaS, 'select', function () {
+					var sel = godinaS.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataGS.getColumnLabel(col),
+									type: dataGS.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewGS = new google.visualization.DataView(dataGS);
+							viewGS.setColumns(columns);
+							godinaS.clearChart();
+							godinaS.draw(viewGS, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan2);
+		clearTimeout(myMjesec2);
+		clearTimeout(myGodina2);
+		myGodina2 = setTimeout(godinaSoc, 86400000);
+		
+	};
+	
+	function danasRazlika() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phprazlika.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataDR = new google.visualization.DataTable(jsonData);
+				
+				var d1 = dataDR.getValue(1, 0);
+				var d2 = new Date (d1);
+				d2.setHours ( d1.getHours() + 24 );
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Kupljeno/prodano',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 } },
+					areaOpacity: 0.45,
+					vAxis: { title: 'Snaga [W]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM,  HH:mm', showTextEvery: 3,
+							minValue: d1, maxValue: d2 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '80', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (danasR === undefined || danasR === null) {
+					danasR = new google.visualization.AreaChart(document.getElementById('Razlika'));
+				} 
+				else {
+					danasR.clearChart();
+				}
+				danasR.draw(dataDR, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataDR.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(danasR, 'select', function () {
+					var sel = danasR.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataDR.getColumnLabel(col),
+									type: dataDR.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewDR = new google.visualization.DataView(dataDR);
+							viewDR.setColumns(columns);
+							danasR.clearChart();
+							danasR.draw(viewDR, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan3);
+		clearTimeout(myMjesec3);
+		clearTimeout(myGodina3);
+		myDan3 = setTimeout(danasRazlika, 60000);
+		
+	};
+	
+	function mjesecRazlika() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpmjesecrazlika.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataMR = new google.visualization.DataTable(jsonData);
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Kupljeno/prodano',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 } },
+					areaOpacity: 0.45,
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '60', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (mjesecR === undefined || mjesecR === null) {
+					mjesecR = new google.visualization.AreaChart(document.getElementById('Razlika'));
+				} 
+				else {
+					mjesecR.clearChart();
+				}
+				mjesecR.draw(dataMR, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataMR.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(mjesecR, 'select', function () {
+					var sel = mjesecR.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataMR.getColumnLabel(col),
+									type: dataMR.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewMR = new google.visualization.DataView(dataMR);
+							viewMR.setColumns(columns);
+							mjesecR.clearChart();
+							mjesecR.draw(viewMR, options);
+						}
+					}
+				});	
+			},
+		});
+		
+		clearTimeout(myDan3);
+		clearTimeout(myMjesec3);
+		clearTimeout(myGodina3);
+		myMjesec3 = setTimeout(mjesecRazlika, 3600000);
+		
+	};
+	
+	function godinaRazlika() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpgodinarazlika.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataGR = new google.visualization.DataTable(jsonData);
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Kupljeno/prodano',
+					titleTextStyle: { fontSize: 17 },
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00', areaOpacity: 0.2 }, 
+							  1: { color: '0072bc', areaOpacity: 0.2 } },
+					areaOpacity: 0.45,
+					vAxis: { title: 'Energija [kWh]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM yyyy', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '70', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' }
+				};
+
+				if (godinaR === undefined || godinaR === null) {
+					godinaR = new google.visualization.AreaChart(document.getElementById('Razlika'));
+				} 
+				else {
+					godinaR.clearChart();
+				}
+				godinaR.draw(dataGR, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataGR.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(godinaR, 'select', function () {
+					var sel = godinaR.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataGR.getColumnLabel(col),
+									type: dataGR.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewGR = new google.visualization.DataView(dataGR);
+							viewGR.setColumns(columns);
+							godinaR.clearChart();
+							godinaR.draw(viewGR, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan3);
+		clearTimeout(myMjesec3);
+		clearTimeout(myGodina3);
+		myGodina3 = setTimeout(godinaRazlika, 86400000);
+		
+	};
+	
+	function danasTemp() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpcontemp.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataDT = new google.visualization.DataTable(jsonData);
+				
+				var d1 = dataDT.getValue(1, 0);
+				var d2 = new Date (d1);
+				d2.setHours ( d1.getHours() + 24 );
+
+				var options = {
+					fontName: 'Roboto',
+					title: 'Temperatura',
+					titleTextStyle: { fontSize: 17 },
+					curveType: 'function',
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: '0072bc', lineWidth: 3.5 }, 
+							  1: { color: 'ffdf00', lineWidth: 3.5 },
+							  2: { color: 'cccccc', lineWidth: 3.5 },
+							  3: { color: 'a6a6a6', lineWidth: 3.5 } },
+					vAxis: { title: 'Temperatura [°C]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM,  HH:mm', showTextEvery: 3,
+							minValue: d1, maxValue: d2 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '80', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' } 
+				};
+
+				if (danasT === undefined || danasT === null) {
+					danasT = new google.visualization.LineChart(document.getElementById('Temp'));
+				} 
+				else {
+					danasT.clearChart();
+				}
+				danasT.draw(dataDT, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataDT.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(danasT, 'select', function () {
+					var sel = danasT.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataDT.getColumnLabel(col),
+									type: dataDT.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewDT = new google.visualization.DataView(dataDT);
+							viewDT.setColumns(columns);
+							danasT.clearChart();
+							danasT.draw(viewDT, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan4)
+		clearTimeout(myMjesec4);
+		clearTimeout(myGodina4);
+		myDan4 = setTimeout(danasTemp, 60000);
+		
+	};
+	
+	function mjesecTemp() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpmjesectemp.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataMT = new google.visualization.DataTable(jsonData);
+				
+				var options = {
+					fontName: 'Roboto',
+					title: 'Temperatura',
+					titleTextStyle: { fontSize: 17 },
+					curveType: 'function',
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00' },
+							  1: { color: 'ffdf00' },
+							  2: { color: '0072bc' },
+							  3: { color: '0072bc' },
+							  4: { color: 'cccccc' },
+							  5: { color: 'cccccc' },
+							  6: { color: 'a6a6a6' },
+							  7: { color: 'a6a6a6' } },
+					vAxis: { title: 'Temperatura [°C]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '60', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' } 
+				};
+
+				if (mjesecT === undefined || mjesecT === null) {
+					mjesecT = new google.visualization.LineChart(document.getElementById('Temp'));
+				} 
+				else {
+					mjesecT.clearChart();
+				}
+				mjesecT.draw(dataMT, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataMT.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(mjesecT, 'select', function () {
+					var sel = mjesecT.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataMT.getColumnLabel(col),
+									type: dataMT.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewMT = new google.visualization.DataView(dataMT);
+							viewMT.setColumns(columns);
+							mjesecT.clearChart();
+							mjesecT.draw(viewMT, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan4)
+		clearTimeout(myMjesec4);
+		clearTimeout(myGodina4);
+		myMjesec4 = setTimeout(mjesecTemp, 3600000);
+		
+	};
+	
+	function godinaTemp() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phpgodinatemp.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataGT = new google.visualization.DataTable(jsonData);
+				
+				var options = {
+					fontName: 'Roboto',
+					title: 'Temperatura',
+					titleTextStyle: { fontSize: 17 },
+					curveType: 'function',
+					legend: { position: 'top', alignment:'center' },
+					series: { 0: { color: 'ffdf00' },
+							  1: { color: 'ffdf00' },
+							  2: { color: '0072bc' },
+							  3: { color: '0072bc' },
+							  4: { color: 'cccccc' },
+							  5: { color: 'cccccc' },
+							  6: { color: 'a6a6a6' },
+							  7: { color: 'a6a6a6' } },
+					vAxis: { title: 'Temperatura [°C]', titleTextStyle: {italic: false} },
+					hAxis: { format: 'd MMM yyyy', showTextEvery: 3 },
+					backgroundColor: '#f2f2f2',
+					chartArea: { left: '70', right: '20', top: '40', bottom:'55', width: '100%', height: '100%' } 
+				};
+
+				if (godinaT === undefined || godinaT === null) {
+					godinaT = new google.visualization.LineChart(document.getElementById('Temp'));
+				} 
+				else {
+					godinaT.clearChart();
+				}
+				godinaT.draw(dataGT, options);
+				
+				var columns = [];
+				var series = {};
+				for (var i = 0; i < dataGT.getNumberOfColumns(); i++) {
+					columns.push(i);
+					if (i > 0) {
+					series[i - 1] = {};
+					}
+				}
+				
+				google.visualization.events.addListener(godinaT, 'select', function () {
+					var sel = godinaT.getSelection();
+					if (sel.length > 0) {
+						if (sel[0].row === null) {
+							var col = sel[0].column;
+							if (columns[col] == col) {
+								columns[col] = {
+									label: dataGT.getColumnLabel(col),
+									type: dataGT.getColumnType(col),
+									calc: function () {
+										return null;
+									}
+								};
+                    
+								series[col - 1].color = '#CCCCCC';
+							}
+							else {
+								columns[col] = col;
+								series[col - 1].color = null;
+							}
+							viewGT = new google.visualization.DataView(dataGT);
+							viewGT.setColumns(columns);
+							godinaT.clearChart();
+							godinaT.draw(viewGT, options);
+						}
+					}
+				});
+			},
+		});
+		
+		clearTimeout(myDan4)
+		clearTimeout(myMjesec4);
+		clearTimeout(myGodina4);
+		myGodina4 = setTimeout(godinaTemp, 86400000);
+		
+	};
+	
+	function drawLivePower() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phplastvalue.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataLP = new google.visualization.DataTable(jsonData);
+				var string = " W";
+				
+				var n1 = Math.round(dataLP.getValue(0, 0));
+				var res1 = n1.toString();			
+				var g1 = res1.concat(string);
+				document.getElementById('gro1').innerHTML = g1;
+				
+				var n2 = Math.round(dataLP.getValue(0, 1));
+				var res2 = n2.toString();			
+				var g2 = res2.concat(string);
+				document.getElementById('gro2').innerHTML = g2;
+				
+				var n3 = Math.round(dataLP.getValue(0, 2));
+				var res3 = n3.toString();			
+				var p = res3.concat(string);
+				document.getElementById('pac').innerHTML = p;
+				
+				var n4 = dataLP.getValue(0, 3);
+				var res4 = n4.toString();			
+				var s1 = res4.concat(string);
+				document.getElementById('soc1').innerHTML = s1;
+				
+				var n5 = dataLP.getValue(0, 4);
+				var res5 = n5.toString();			
+				var s2 = res5.concat(string);
+				document.getElementById('soc2').innerHTML = s2;
+				
+				var n6 = dataLP.getValue(0, 5);
+				var res6 = n6.toString();			
+				var s3 = res6.concat(string);
+				document.getElementById('soc3').innerHTML = s3;
+			},	
+		});
+		
+		setTimeout(drawLivePower, 10000);
+		
+	};
+	
+	function drawLiveTemp() {
+		$.ajax({
+			url: "http://192.168.0.183/webscada/phplasttemp.php",
+			dataType: "json",
+			success: function (jsonData){
+          
+				dataLT = new google.visualization.DataTable(jsonData);
+				var string = " °C";
+				
+				var n1 = Math.round(dataLT.getValue(0, 0)*10)/10;
+				var res1 = n1.toString();			
+				var priz = res1.concat(string);
+				document.getElementById('prizemlje').innerHTML = priz;
+				
+				var n2 = Math.round(dataLT.getValue(0, 1)*10)/10;
+				var res2 = n2.toString();
+				var kat = res2.concat(string);
+				document.getElementById('kat').innerHTML = kat;
+				
+				var n3 = Math.round(dataLT.getValue(0, 2)*10)/10;
+				var res3 = n3.toString();
+				var rad = res3.concat(string);
+				document.getElementById('radiona').innerHTML = rad;
+				
+				var n4 = Math.round(dataLT.getValue(0, 3)*10)/10;
+				var res4 = n4.toString();
+				var van = res4.concat(string);
+				document.getElementById('vanjska').innerHTML = van;
+			},
+		});
+		
+		setTimeout(drawLiveTemp, 300000);
+		
+	};
+	
+	function startTime() {
+		var today = new Date();
+		var h = today.getHours();
+		var m = today.getMinutes();
+		var s = today.getSeconds();
+		m = checkTime(m);
+		s = checkTime(s);
+		document.getElementById('txt').innerHTML = h + ":" + m + ":" + s;
+		document.getElementById('txt').style.textAlign = "right";
+		var t = setTimeout(startTime, 500);
+	};
+	
+	function checkTime(i) {
+		if (i < 10) {i = "0" + i};
+		return i;
+	};
+	
+    </script>	
+	
+	<style>
+		html {
+			overflow-y: hidden;
+		}
+	</style>
+	
+  </head>
+
+  <body onload="startTime(); drawLivePower(); drawLiveTemp();" style="background-color: #f2f2f2;">
+  
+	<div style="position: absolute; top: 0; left: 0; width: 100%; height: 75px; background-color: #0072bc;" >	
+		<img src="C:\Users\franjod.HELBNET\Desktop\logo_helb.svg" style="margin-left: 65px; margin-top: 21px; width:200px; display:block; position: relative; z-index: 2500;" />	
+		<div id="txt" style="position: relative; top: -34px; text-align: right; margin-right: 90px; font-family: 'Roboto'; font-weight: 500; font-size: 31px; color:#ffffff;"></div>
+		<div style="position: relative; top: -71px; text-align: center; font-family: 'Roboto'; font-weight: 500; font-size: 31px; color:#ffffff" >HELB ENERGY MONITORING SYSTEM </div>		
+	</div>
+	
+	<label style="position: absolute; top: 1046px; left: 1265px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >KAT
+		<div  id="kat" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #ffdf00;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 1046px; left: 1405px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >PRIZEMLJE
+		<div  id="prizemlje" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #0072bc;" ></div>
+	</label>
+
+	<label style="position: absolute; top: 1046px; left: 1545px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >RADIONA
+		<div  id="radiona" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #cccccc;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 1046px; left: 1685px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >VANJSKA
+		<div  id="vanjska" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #a6a6a6;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 300px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >GRO1
+		<div  id="gro1" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #ffdf00;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 460px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >GRO2
+		<div  id="gro2" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #0072bc;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 620px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >SOLARNA
+		<div  id="pac" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #a6a6a6;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 1260px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >KLIMA KAT
+		<div  id="soc1" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #ffdf00;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 1420px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >KLIMA PRIZEMLJE
+		<div  id="soc2" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #0072bc;" ></div>
+	</label>
+	
+	<label style="position: absolute; top: 556px; left: 1620px; font-family: 'Roboto'; font-weight: 500; font-size: 14px; color:#000000; text-align: center;" >GRIJANJE VODE
+		<div  id="soc3" style="position: relative; top: -43px; font-family: 'Roboto'; font-weight: 700; font-size: 17px; color:#000000; border: 0px solid #ffffff; padding-left: 10px; padding-right: 10px; padding-top: 2px; background-color: #a6a6a6;" ></div>
+	</label>
+	
+	<div id="ProPot" style="position: absolute; top: 90px; left: 10px; width: 940px; height: 440px; border: 1px solid #f2f2f2;" ></div>
+	
+	<form>
+		<input type="radio" name="razdoblje" value="danas1" id="danas1" onclick="danasProPot()" style="position: absolute; top: 530px; left: 90px;" checked/> 
+		<label style="position: absolute; top: 532px; left: 115px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >d</label>
+		<input type="radio" name="razdoblje" value="mjesec1" id="mjesec1" onclick="mjesecProPot()" style="position: absolute; top: 530px; left: 145px;" /> 
+		<label style="position: absolute; top: 532px; left: 170px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >m </label>
+		<input type="radio" name="razdoblje" value="godina1" id="godina1" onclick="godinaProPot()" style="position: absolute; top: 530px; left: 200px;" />
+		<label style="position: absolute; top: 532px; left: 225px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >g </label>
+	</form>
+		
+	<div id="Soc" style="position: absolute; top: 90px; left: 970px; width: 940px; height: 440px; border: 1px solid #f2f2f2" ></div>
+	
+	<form>
+		<input type="radio" name="razdoblje" value="danas2" id="danas2" onclick="danasSoc()" style="position: absolute; top: 530px; left: 1050px;" checked/> 
+		<label style="position: absolute; top: 532px; left: 1075px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >d </label>
+		<input type="radio" name="razdoblje" value="mjesec2" id="mjesec2" onclick="mjesecSoc()" style="position: absolute; top: 530px; left: 1105px;" /> 
+		<label style="position: absolute; top: 532px; left: 1130px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >m </label>
+		<input type="radio" name="razdoblje" value="godina2" id="godina2" onclick="godinaSoc()" style="position: absolute; top: 530px; left: 1160px;" />
+		<label style="position: absolute; top: 532px; left: 1185px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >g </label>
+	</form>
+
+	<div id="Razlika" style="position: absolute; top: 580px; left: 10px; width: 940px; height: 440px; border: 1px solid #f2f2f2" ></div>
+	
+	<form>
+		<input type="radio" name="razdoblje" value="danas3" id="danas3" onclick="danasRazlika()" style="position: absolute; top: 1020px; left: 90px;" checked/> 
+		<label style="position: absolute; top: 1022px; left: 115px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >d </label>
+		<input type="radio" name="razdoblje" value="mjesec3" id="mjesec3" onclick="mjesecRazlika()" style="position: absolute; top: 1020px; left: 145px;" /> 
+		<label style="position: absolute; top: 1022px; left: 170px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >m </label>
+		<input type="radio" name="razdoblje" value="godina3" id="godina3" onclick="godinaRazlika()" style="position: absolute; top: 1020px; left: 200px;" />
+		<label style="position: absolute; top: 1022px; left: 225px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >g </label>
+	</form>
+		
+	<div id="Temp" style="position: absolute; top: 580px; left: 970px; width: 940px; height: 440px; border: 1px solid #f2f2f2" ></div>
+	
+	<form>
+		<input type="radio" name="razdoblje" value="danas4" id="danas4" onclick="danasTemp()" style="position: absolute; top: 1020px; left: 1050px;" checked/> 
+		<label style="position: absolute; top: 1022px; left: 1075px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >d </label>
+		<input type="radio" name="razdoblje" value="mjesec4" id="mjesec4" onclick="mjesecTemp()" style="position: absolute; top: 1020px; left: 1105px;" /> 
+		<label style="position: absolute; top: 1022px; left: 1130px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >m </label>
+		<input type="radio" name="razdoblje" value="godina4" id="godina4" onclick="godinaTemp()" style="position: absolute; top: 1020px; left: 1160px;" />
+		<label style="position: absolute; top: 1022px; left: 1185px; font-family: 'Roboto'; font-weight: 500; font-size: 14px;" >g </label>
+	</form>
+		
+  </body>
+</html>
