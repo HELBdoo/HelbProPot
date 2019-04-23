@@ -2,7 +2,7 @@
   <head>
 	<link href="https://fonts.googleapis.com/css?family=Roboto:300,500" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script type="text/javascript">
     
     google.charts.load('current', {'packages':['corechart']});
@@ -20,7 +20,7 @@
 	
     function danasProPot() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phppropot.php",
+			url: "phppropot.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -101,7 +101,7 @@
 	
 	function mjesecProPot() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpmjesecpropot.php",
+			url: "phpmjesecpropot.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -177,7 +177,7 @@
 	
 	function godinaProPot() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpgodinapropot.php",
+			url: "phpgodinapropot.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -253,7 +253,7 @@
 	
 	function danasSoc() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpsoc.php",
+			url: "phpsoc.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -334,7 +334,7 @@
 	
 	function mjesecSoc() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpmjesecsoc.php",
+			url: "phpmjesecsoc.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -410,7 +410,7 @@
 	
 	function godinaSoc() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpgodinasoc.php",
+			url: "phpgodinasoc.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -486,7 +486,7 @@
 	
 	function danasRazlika() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phprazlika.php",
+			url: "phprazlika.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -567,7 +567,7 @@
 	
 	function mjesecRazlika() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpmjesecrazlika.php",
+			url: "phpmjesecrazlika.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -643,7 +643,7 @@
 	
 	function godinaRazlika() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpgodinarazlika.php",
+			url: "phpgodinarazlika.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -719,7 +719,7 @@
 	
 	function danasTemp() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpcontemp.php",
+			url: "phpcontemp.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -802,7 +802,7 @@
 	
 	function mjesecTemp() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpmjesectemp.php",
+			url: "phpmjesectemp.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -884,7 +884,7 @@
 	
 	function godinaTemp() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phpgodinatemp.php",
+			url: "phpgodinatemp.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -966,7 +966,7 @@
 	
 	function drawLivePower() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phplastvalue.php",
+			url: "phplastvalue.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -1011,7 +1011,7 @@
 	
 	function drawLiveTemp() {
 		$.ajax({
-			url: "http://192.168.0.183/webscada/phplasttemp.php",
+			url: "phplasttemp.php",
 			dataType: "json",
 			success: function (jsonData){
           
@@ -1074,7 +1074,7 @@
   <body onload="startTime(); drawLivePower(); drawLiveTemp();" style="background-color: #f2f2f2;">
   
 	<div style="position: absolute; top: 0; left: 0; width: 100%; height: 75px; background-color: #0072bc;" >	
-		<img src="C:\Users\franjod.HELBNET\Desktop\logo_helb.svg" style="margin-left: 65px; margin-top: 21px; width:200px; display:block; position: relative; z-index: 2500;" />	
+		<img src="logo_helb.svg" style="margin-left: 65px; margin-top: 21px; width:200px; display:block; position: relative; z-index: 2500;" />	
 		<div id="txt" style="position: relative; top: -34px; text-align: right; margin-right: 90px; font-family: 'Roboto'; font-weight: 500; font-size: 31px; color:#ffffff;"></div>
 		<div style="position: relative; top: -71px; text-align: center; font-family: 'Roboto'; font-weight: 500; font-size: 31px; color:#ffffff" >HELB ENERGY MONITORING SYSTEM </div>		
 	</div>
